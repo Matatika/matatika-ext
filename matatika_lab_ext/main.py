@@ -2,15 +2,26 @@
 
 import os
 import sys
+import webbrowser
 from typing import List
 
 import structlog
 import typer
 from meltano.edk.extension import DescribeFormat
 from meltano.edk.logging import default_logging_config, parse_log_level
+
 from matatika_lab_ext.extension import MatatikaLab
 
+try:
+    from importlib.resources import path as ir_path
+except ImportError:
+    from importlib_resources import path as ir_path
+
 APP_NAME = "MatatikaLab"
+LAB_URL = "https://localhost:3443"
+
+with ir_path("files_matatika_lab_ext", "docker-compose.yml") as docker_compose_file:
+    DOCKER_COMPOSE_FILE = str(docker_compose_file)
 
 log = structlog.get_logger(APP_NAME)
 
@@ -87,10 +98,37 @@ def main(
         help="Log in the meltano JSON log format"
     ),
 ) -> None:
-    """Simple Meltano extension that wraps the docker CLI."""
+    """Simple Meltano extension that wraps the Docker Compose CLI."""
     default_logging_config(
         level=parse_log_level(log_level),
         timestamps=log_timestamps,
         levels=log_levels,
-        json_format=meltano_log_json
+        json_format=meltano_log_json,
+    )
+
+
+@app.command()
+def start():
+    """Start the Matatika Lab"""
+    ext.pass_through_invoker(
+        log,
+        "compose",
+        "-f",
+        DOCKER_COMPOSE_FILE,
+        "up",
+        "--detach",
+    )
+
+    webbrowser.open_new_tab(LAB_URL)
+
+
+@app.command()
+def stop():
+    """Stop the Matatika"""
+    ext.pass_through_invoker(
+        log,
+        "compose",
+        "-f",
+        DOCKER_COMPOSE_FILE,
+        "down",
     )
