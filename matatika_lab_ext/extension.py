@@ -19,7 +19,25 @@ try:
 except ImportError:
     from importlib_resources import files as ir_files
 
+COMPOSE_FILE: Path = ir_files("files_matatika_lab_ext").joinpath("docker-compose.yml")
+
 log = structlog.get_logger()
+
+
+class SubcommandInvoker(Invoker):
+    """Invoker to set an alternate subcommand entrypoint."""
+
+    def __init__(self, bin: str, *subcommands: str, env: dict[str, Any] = None):
+        super().__init__(bin, env=env)
+        self.subcommands = subcommands
+
+    def run(self, *args, **kwargs):
+        args = self.subcommands + args
+        return super().run(*args, **kwargs)
+
+    def run_and_log(self, sub_command: str | None = None, *args, **kwargs):
+        args = self.subcommands + args
+        return super().run_and_log(sub_command, *args, **kwargs)
 
 
 class MatatikaLab(ExtensionBase):
@@ -27,7 +45,19 @@ class MatatikaLab(ExtensionBase):
 
     def __init__(self) -> None:
         """Initialize the extension."""
-        self.matatika_lab_invoker = Invoker("docker")
+        env = {
+            "COMPOSE_FILE": COMPOSE_FILE,
+            "COMPOSE_PROJECT_NAME": Path.cwd().name,
+            **os.environ,
+        }
+
+        # prefer Compose V2
+        self.matatika_lab_invoker = SubcommandInvoker("docker", "compose", env=env)
+
+        try:
+            self.matatika_lab_invoker.run("version")
+        except subprocess.CalledProcessError:
+            self.matatika_lab_invoker = Invoker("docker-compose", env=env)
 
     def invoke(self, command_name: str | None, *command_args: Any) -> None:
         """Invoke the underlying cli, that is being wrapped by this extension.

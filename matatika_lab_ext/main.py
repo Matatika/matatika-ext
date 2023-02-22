@@ -12,16 +12,8 @@ from meltano.edk.logging import default_logging_config, parse_log_level
 
 from matatika_lab_ext.extension import MatatikaLab
 
-try:
-    from importlib.resources import path as ir_path
-except ImportError:
-    from importlib_resources import path as ir_path
-
 APP_NAME = "MatatikaLab"
 LAB_URL = "https://localhost:3443"
-
-with ir_path("files_matatika_lab_ext", "docker-compose.yml") as docker_compose_file:
-    DOCKER_COMPOSE_FILE = str(docker_compose_file)
 
 log = structlog.get_logger(APP_NAME)
 
@@ -93,9 +85,10 @@ def main(
         False, "--log-levels", envvar="LOG_LEVELS", help="Show log levels"
     ),
     meltano_log_json: bool = typer.Option(
-        False, "--meltano-log-json",
+        False,
+        "--meltano-log-json",
         envvar="MELTANO_LOG_JSON",
-        help="Log in the meltano JSON log format"
+        help="Log in the meltano JSON log format",
     ),
 ) -> None:
     """Simple Meltano extension that wraps the Docker Compose CLI."""
@@ -109,26 +102,13 @@ def main(
 
 @app.command()
 def start():
-    """Start the Matatika Lab"""
-    ext.pass_through_invoker(
-        log,
-        "compose",
-        "-f",
-        DOCKER_COMPOSE_FILE,
-        "up",
-        "--detach",
-    )
+    """Start the Matatika Lab."""
+    ext.pass_through_invoker(log, "up", "--detach")
 
     webbrowser.open_new_tab(LAB_URL)
 
 
 @app.command()
 def stop():
-    """Stop the Matatika"""
-    ext.pass_through_invoker(
-        log,
-        "compose",
-        "-f",
-        DOCKER_COMPOSE_FILE,
-        "down",
-    )
+    """Stop the Matatika Lab."""
+    ext.pass_through_invoker(log, "down")
