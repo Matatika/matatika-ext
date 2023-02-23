@@ -21,10 +21,16 @@ ext = Matatika()
 typer.core.rich = None  # remove to enable stylized help output when `rich` is installed
 app = typer.Typer(
     name=APP_NAME,
+    no_args_is_help=True,
     pretty_exceptions_enable=False,
 )
 
-app.add_typer(lab.app, name="lab", help="Interface for the Matatika Lab.")
+app.add_typer(
+    lab.app,
+    name="lab",
+    help="Interface for the Matatika Lab.",
+    no_args_is_help=True,
+)
 
 
 @app.command()
