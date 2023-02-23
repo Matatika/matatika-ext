@@ -1,12 +1,12 @@
 [tool.poetry]
-name = "matatika-lab-ext"
+name = "matatika-ext"
 version = "0.0.1"
-description = "`matatika-lab-ext` is a Meltano utility extension."
+description = "`matatika-ext` is a Meltano utility extension."
 authors = ["Reuben Frankel"]
 license = "Apache 2.0"
 packages = [
-    { include = "matatika_lab_ext" },
-    { include = "files_matatika_lab_ext" },
+    { include = "matatika_ext" },
+    { include = "files_matatika_ext" },
 ]
 exclude = [
     "**/__pycache__",
@@ -30,5 +30,5 @@ requires = ["poetry-core>=1.0.8"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
-matatika-lab_extension = 'matatika_lab_ext.main:app'
-matatika-lab_invoker = 'matatika_lab_ext.pass_through:pass_through_cli'
+matatika_extension = 'matatika_ext.main:app'
+matatika_invoker = 'matatika_ext.pass_through:pass_through_cli'

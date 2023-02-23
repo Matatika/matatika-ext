@@ -1,8 +1,7 @@
-"""MatatikaLab cli entrypoint."""
+"""Matatika cli entrypoint."""
 
 import os
 import sys
-import webbrowser
 from typing import List
 
 import structlog
@@ -10,14 +9,14 @@ import typer
 from meltano.edk.extension import DescribeFormat
 from meltano.edk.logging import default_logging_config, parse_log_level
 
-from matatika_lab_ext.extension import MatatikaLab
+import matatika_ext.lab as lab
+from matatika_ext.extension import Matatika
 
-APP_NAME = "MatatikaLab"
-LAB_URL = "https://localhost:3443"
+APP_NAME = "Matatika"
 
 log = structlog.get_logger(APP_NAME)
 
-ext = MatatikaLab()
+ext = Matatika()
 
 typer.core.rich = None  # remove to enable stylized help output when `rich` is installed
 app = typer.Typer(
@@ -25,13 +24,15 @@ app = typer.Typer(
     pretty_exceptions_enable=False,
 )
 
+app.add_typer(lab.app, name="lab", help="Interface for the Matatika Lab.")
+
 
 @app.command()
 def initialize(
     ctx: typer.Context,
     force: bool = typer.Option(False, help="Force initialization (if supported)"),
 ) -> None:
-    """Initialize the MatatikaLab plugin."""
+    """Initialize the Matatika plugin."""
     try:
         ext.initialize(force)
     except Exception:
@@ -99,22 +100,8 @@ def main(
         json_format=meltano_log_json,
     )
 
+    def invoke(*args):
+        return ext.pass_through_invoker(log, *args)
 
-@app.command()
-def start():
-    """Start the Matatika Lab."""
-    ext.pass_through_invoker(log, "up", "--detach")
-
-    webbrowser.open_new_tab(LAB_URL)
-
-
-@app.command()
-def stop(
-    reset: bool = typer.Option(False, help="Clear all data."),
-):
-    """Stop the Matatika Lab."""
-    flags = {
-        "-v": reset,
-    }
-
-    ext.pass_through_invoker(log, "down", *[f for f in flags if flags[f]])
+    ctx.ensure_object(dict)
+    ctx.obj["invoke"] = invoke

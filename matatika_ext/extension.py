@@ -1,4 +1,4 @@
-"""Meltano MatatikaLab extension."""
+"""Meltano Matatika extension."""
 from __future__ import annotations
 
 import os
@@ -19,7 +19,7 @@ try:
 except ImportError:
     from importlib_resources import files as ir_files
 
-COMPOSE_FILE: Path = ir_files("files_matatika_lab_ext").joinpath("docker-compose.yml")
+COMPOSE_FILE: Path = ir_files("files_matatika_ext").joinpath("docker-compose.yml")
 
 log = structlog.get_logger()
 
@@ -40,7 +40,7 @@ class SubcommandInvoker(Invoker):
         return super().run_and_log(sub_command, *args, **kwargs)
 
 
-class MatatikaLab(ExtensionBase):
+class Matatika(ExtensionBase):
     """Extension implementing the ExtensionBase interface."""
 
     def __init__(self) -> None:
@@ -52,12 +52,12 @@ class MatatikaLab(ExtensionBase):
         }
 
         # prefer Compose V2
-        self.matatika_lab_invoker = SubcommandInvoker("docker", "compose", env=env)
+        self.matatika_invoker = SubcommandInvoker("docker", "compose", env=env)
 
         try:
-            self.matatika_lab_invoker.run("version")
+            self.matatika_invoker.run("version")
         except subprocess.CalledProcessError:
-            self.matatika_lab_invoker = Invoker("docker-compose", env=env)
+            self.matatika_invoker = Invoker("docker-compose", env=env)
 
     def invoke(self, command_name: str | None, *command_args: Any) -> None:
         """Invoke the underlying cli, that is being wrapped by this extension.
@@ -67,10 +67,10 @@ class MatatikaLab(ExtensionBase):
             command_args: The arguments to pass to the command.
         """
         try:
-            self.matatika_lab_invoker.run_and_log(command_name, *command_args)
+            self.matatika_invoker.run_and_log(command_name, *command_args)
         except subprocess.CalledProcessError as err:
             log_subprocess_error(
-                f"matatika-lab {command_name}", err, "MatatikaLab invocation failed"
+                f"matatika {command_name}", err, "Matatika invocation failed"
             )
             sys.exit(err.returncode)
 
@@ -84,10 +84,10 @@ class MatatikaLab(ExtensionBase):
         return models.Describe(
             commands=[
                 models.ExtensionCommand(
-                    name="matatika-lab_extension", description="extension commands"
+                    name="matatika_extension", description="extension commands"
                 ),
                 models.InvokerCommand(
-                    name="matatika-lab_invoker", description="pass through invoker"
+                    name="matatika_invoker", description="pass through invoker"
                 ),
             ]
         )
@@ -121,4 +121,4 @@ class MatatikaLab(ExtensionBase):
                 else:
                     copy(file, dst_file)
 
-        copy(ir_files("files_matatika_lab_ext"))
+        copy(ir_files("files_matatika_ext"))

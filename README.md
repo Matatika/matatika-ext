@@ -1,6 +1,6 @@
-# MatatikaLab
+# Matatika
 
-MatatikaLab is a Meltano utility extension for the Matatika Lab
+Matatika is a Meltano utility extension for the Matatika Lab
 
 ## Installing this extension for local development
 
@@ -14,7 +14,7 @@ poetry install
 2. Verify that you can invoke the extension:
 
 ```shell
-poetry run matatika-lab_extension --help
-poetry run matatika-lab_extension describe --format=yaml
-poetry run matatika-lab_invoker --help # if you have are wrapping another tool
+poetry run matatika_extension --help
+poetry run matatika_extension describe --format=yaml
+poetry run matatika_invoker --help # if you have are wrapping another tool
 ```
