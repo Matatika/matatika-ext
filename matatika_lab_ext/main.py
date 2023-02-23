@@ -109,6 +109,12 @@ def start():
 
 
 @app.command()
-def stop():
+def stop(
+    reset: bool = typer.Option(False, help="Clear all data."),
+):
     """Stop the Matatika Lab."""
-    ext.pass_through_invoker(log, "down")
+    flags = {
+        "-v": reset,
+    }
+
+    ext.pass_through_invoker(log, "down", *[f for f in flags if flags[f]])
