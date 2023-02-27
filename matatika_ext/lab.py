@@ -29,6 +29,7 @@ def stop(
     """Stop the Matatika Lab."""
     flags = {
         "-v": reset,
+        "--remove-orphans": reset,
     }
 
     ctx.obj["invoke"]("down", *[f for f in flags if flags[f]])
