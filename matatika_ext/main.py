@@ -29,7 +29,6 @@ app.add_typer(
     lab.app,
     name="lab",
     help="Interface for the Matatika Lab.",
-    no_args_is_help=True,
 )
 
 
