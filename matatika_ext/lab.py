@@ -16,6 +16,7 @@ app = typer.Typer()
 @app.callback(invoke_without_command=True)
 def default(
     ctx: typer.Context,
+    browser: bool = typer.Option(True, help="Open the Lab in the default web browser."),
 ):
     if ctx.invoked_subcommand:
         return
@@ -44,24 +45,28 @@ def default(
             f"Opened {LAB_URL} in default browser (completed in {time.time() - start_time:.2f}s))"
         )
 
-    threading.Thread(target=open_app_in_browser).start()
+    if browser:
+        threading.Thread(target=open_app_in_browser).start()
+
     ctx.obj["invoke"]("up")
 
 
 @app.command()
 def start(
     ctx: typer.Context,
+    browser: bool = typer.Option(True, help="Open the Lab in the default web browser."),
 ):
     """Start the Matatika Lab."""
     ctx.obj["invoke"]("up", "--detach")
 
-    webbrowser.open_new_tab(LAB_URL)
+    if browser:
+        webbrowser.open_new_tab(LAB_URL)
 
 
 @app.command()
 def stop(
     ctx: typer.Context,
-    reset: bool = typer.Option(False, help="Clear all data."),
+    reset: bool = typer.Option(False, help="Clear all data.", ),
 ):
     """Stop the Matatika Lab."""
     flags = {
