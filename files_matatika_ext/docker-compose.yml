@@ -25,6 +25,8 @@ services:
       # Disable elastic search
       - MATATIKA_ELASTICSEARCH_ENABLED=false
       - MANAGEMENT_HEALTH_ELASTICSEARCH_ENABLED=false
+      # Disable logstash
+      - MATATIKA_LOGSTASH_ENABLED=false
       # Generate a 256-bit (32-char) secret key and set it here. This is used to generate access tokens for the Matatika App and API.
       - MATATIKA_AUTH_LOCAL_SECRET=matatikaauthlocalsecret_changeme
     depends_on: {"db": {"condition": "service_healthy"}}
