@@ -106,6 +106,7 @@ def main(
     )
 
     def invoke(*args):
+        ext.matatika_invoker.popen_env.update(ctx.obj["env"])
         return ext.pass_through_invoker(log, *args)
 
     ctx.ensure_object(dict)

@@ -1,6 +1,7 @@
 import threading
 import time
 import webbrowser
+from typing import Optional
 
 import requests
 import typer
@@ -17,7 +18,20 @@ app = typer.Typer()
 def default(
     ctx: typer.Context,
     browser: bool = typer.Option(True, help="Open the Lab in the default web browser."),
+    dbPort: Optional[int] = typer.Option(
+        None,
+        "--db-port",
+        envvar="MATATIKA_DB_PORT",
+        help="Port number to start the database service on.",
+    ),
 ):
+
+    env = {
+        "MATATIKA_DB_PORT": dbPort,
+    }
+
+    ctx.obj["env"] = {k: str(v) for k, v in env.items() if v is not None}
+
     if ctx.invoked_subcommand:
         return
 
