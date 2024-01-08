@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
   catalog:
-    image: matatika/catalog:17664
+    image: matatika/catalog:18145
     ports:
       - '8080:8080'
     deploy:
@@ -40,7 +40,7 @@ services:
 
   app:
     user: root
-    image: matatika/app:17664
+    image: matatika/app:18145
     ports:
       - '3080:80'
       - '3443:443'
