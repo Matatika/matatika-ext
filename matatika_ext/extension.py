@@ -45,8 +45,8 @@ class Matatika(ExtensionBase):
     def __init__(self) -> None:
         """Initialize the extension."""
         env = {
-            "COMPOSE_FILE": COMPOSE_FILE,
-            "COMPOSE_PROJECT_NAME": Path.cwd().name,
+            "COMPOSE_FILE": str(COMPOSE_FILE),
+            "COMPOSE_PROJECT_NAME": str(Path.cwd().name),
             **os.environ,
         }
 
