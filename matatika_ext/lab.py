@@ -8,7 +8,7 @@ import typer
 
 from matatika_ext.extension import log
 
-LAB_URL = "https://localhost:3443"
+LAB_URL = "http://localhost:8080"
 
 typer.core.rich = None  # remove to enable stylized help output when `rich` is installed
 app = typer.Typer()
