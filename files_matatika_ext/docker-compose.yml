@@ -1,16 +1,16 @@
-version: '3.7'
+version: "3.7"
 
 services:
   catalog:
     image: matatika/catalog:22212
     ports:
-      - '8080:8080'
+      - "8080:8080"
     deploy:
-        resources:
-            reservations:
-              memory: 1g
-            limits:
-              memory: 3g
+      resources:
+        reservations:
+          memory: 1g
+        limits:
+          memory: 3g
     tty: true
     environment:
       # ==== CATALOG ====
