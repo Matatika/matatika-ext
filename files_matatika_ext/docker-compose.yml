@@ -31,7 +31,9 @@ services:
       - MATATIKA_AUTH_LOCAL_SECRET=matatikaauthlocalsecret_changeme
       # ==== APP ====
       - REACT_APP_ENV=distribution
-    depends_on: {"db": {"condition": "service_healthy"}}
+    depends_on:
+      db:
+        condition: service_healthy
     healthcheck:
       test: curl -s http://localhost:8080/api/actuator/health | grep "UP" >/dev/null; if [[ $$? == 0 ]]; then echo 0; else echo 1; fi
       interval: 30s
