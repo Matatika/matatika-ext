@@ -13,7 +13,7 @@ services:
               memory: 3g
     tty: true
     environment:
-      # Define DEVELOPMENT mode environments like debug settings etc
+      # ==== CATALOG ====
       - ACTIVE_PROFILES=default,distribution
       - "JAVA_OPTS=-XX:MaxDirectMemorySize=1G -XX:MaxMetaspaceSize=240234K -XX:ReservedCodeCacheSize=240M -Xss1M -Xms512m -Xmx1040584K"
       - SPRING_H2_CONSOLE_ENABLED=false
@@ -29,6 +29,8 @@ services:
       - MATATIKA_LOGSTASH_ENABLED=false
       # Generate a 256-bit (32-char) secret key and set it here. This is used to generate access tokens for the Matatika App and API.
       - MATATIKA_AUTH_LOCAL_SECRET=matatikaauthlocalsecret_changeme
+      # ==== APP ====
+      - REACT_APP_ENV=distribution
     depends_on: {"db": {"condition": "service_healthy"}}
     healthcheck:
       test: curl -s http://localhost:8080/api/actuator/health | grep "UP" >/dev/null; if [[ $$? == 0 ]]; then echo 0; else echo 1; fi
@@ -37,21 +39,6 @@ services:
       retries: 5
     volumes:
       - project:/project
-
-  app:
-    user: root
-    image: matatika/app:22212
-    ports:
-      - '3080:80'
-      - '3443:443'
-    tty: true
-    environment:
-      # Define DEVELOPMENT mode environments like debug settings etc
-      - REACT_APP_ENV=distribution
-    depends_on: {"catalog": {"condition": "service_healthy"}}
-    entrypoint: >
-      /bin/bash -c "
-        /app/docker-entrypoint.sh app"
 
   db:
     image: postgres:11
