@@ -2,7 +2,7 @@ version: "3.7"
 
 services:
   catalog:
-    image: matatika/catalog:31517
+    image: matatika/catalog:31902
     ports:
       - "8080:8080"
     deploy:
